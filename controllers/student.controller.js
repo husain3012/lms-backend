@@ -95,9 +95,46 @@ const addFakeUsers = async (req, res, next) => {
   }
 };
 
+
+const updateDetails = async (req, res, next) => {
+  const { name, oldPassword, newPassword } = req.body;
+  const student_id = req.user.userId;
+  if (name !== undefined) {
+    const query = `update students set name = '${name}' where student_id = '${student_id}'`;
+    try {
+      const result = await client.query(query);
+      res.json({ message: "Name Updated" });
+    } catch (e) {
+      console.log(e);
+      res.status(400).json({ message: "Error" });
+    }
+  }
+  else if (oldPassword !== undefined) {
+    const checkPasswordQuery = `select * from students where student_id = '${student_id}'`;
+    const result = await client.query(checkPasswordQuery);
+    const user = result.rows[0];
+    const passwordDecrypted = await Decrypt(user.password);
+    if (oldPassword === passwordDecrypted) {
+      const passwordEncrypted = await Encrypt(newPassword);
+      const query = `update students set password = '${passwordEncrypted}' where student_id = '${student_id}'`;
+      try {
+        const result = await client.query(query);
+        res.json({ message: "Password Updated" });
+      } catch (e) {
+        console.log(e);
+        res.status(400).json({ message: "Error" });
+      }
+    }
+    else {
+      res.status(400).json({ message: "Wrong Password" });
+    }
+  }
+};
+
 module.exports = {
   getUsers,
   signup,
   login,
   addFakeUsers,
+  updateDetails,
 };
