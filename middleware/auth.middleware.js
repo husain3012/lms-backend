@@ -2,7 +2,9 @@ const jwt = require("jsonwebtoken");
 
 // auth middleware
 const authMiddleware = async (req, res, next) => {
-  let token = req.cookies.token;
+  const authHeader = req.headers.authorization;
+  const token = authHeader.split(" ")[1];
+
   if (token) {
     try {
       const decoded = await jwt.verify(token, process.env.APP_SECRET);
@@ -11,10 +13,10 @@ const authMiddleware = async (req, res, next) => {
       next();
     } catch (err) {
       console.log(err);
-      res.redirect("/");
+      res.status(401).send({ message: "Invalid Token" });
     }
   } else {
-    res.redirect("/");
+    res.status(401).send({ message: "Unauthorized" });
   }
 };
 

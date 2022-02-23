@@ -18,7 +18,7 @@ const createClassroom = async (req, res, next) => {
   if (req.user.userType !== "teacher") {
     return res.status(400).send({ message: "You are not authorized to create a classroom" });
   }
-  const query = `insert into classrooms(classroom_id, name,description, teacher_id) values('${uuidv4()}', '${name}',${description}', '${req.user.userId}')`;
+  const query = `insert into classrooms(classroom_id, name,description, teacher_id) values('${uuidv4()}', '${name}','${description}', '${req.user.userId}')`;
   try {
     const result = await client.query(query);
     res.json(result);
