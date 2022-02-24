@@ -1,11 +1,17 @@
 const client = require("../config/DB");
+const short_uuid = require("short-uuid");
 const { v4: uuidv4 } = require("uuid");
+
+const uuidTranslator = short_uuid();
+uuidTranslator.maxLength = 10;
 
 const getClassroomById = async (req, res, next) => {
   const { classroom_id } = req.params;
   const query = `select * from classrooms where classroom_id = '${classroom_id}'`;
+
   try {
     const result = await client.query(query);
+    console.log(result.rows);
     res.json(result.rows);
   } catch (e) {
     console.log(e);
@@ -14,11 +20,11 @@ const getClassroomById = async (req, res, next) => {
 };
 
 const createClassroom = async (req, res, next) => {
-  const { name, description } = req.body;
+  const { name, description, section } = req.body;
   if (req.user.userType !== "teacher") {
     return res.status(400).send({ message: "You are not authorized to create a classroom" });
   }
-  const query = `insert into classrooms(classroom_id, name,description, teacher_id) values('${uuidv4()}', '${name}','${description}', '${req.user.userId}')`;
+  const query = `insert into classrooms(classroom_id, name,description, section, teacher_id) values('${uuidv4()}', '${name}','${description}', '${section}', '${req.user.userId}')`;
   try {
     const result = await client.query(query);
     res.json(result);
@@ -32,12 +38,20 @@ const getCreatedClassrooms = async (req, res, next) => {
   if (req.user.userType !== "teacher") {
     return res.status(400).send({ message: "You cannot get created classrooms" });
   }
-
-  const query = `select * from classrooms where teacher_id = '${req.user.userId}'`;
+  const query = `select classrooms.*, count(students_classrooms.student_id) as students_count from classrooms inner join students_classrooms on classrooms.classroom_id = students_classrooms.classroom_id where classrooms.teacher_id = '${req.user.userId}' group by classrooms.classroom_id`;
 
   try {
     const result = await client.query(query);
-    res.json(result.rows);
+    console.log(result.rows);
+    console.log(result.rows);
+    const transformedData = result.rows.map((row) => {
+      return {
+        ...row,
+        short_id: uuidTranslator.fromUUID(row.classroom_id, (length = 6)),
+      };
+    });
+    // console.log(transformedData);
+    res.json(transformedData);
   } catch (e) {
     console.log(e);
     res.status(400).json({ message: "Error" });
@@ -48,8 +62,10 @@ const joinClassroom = async (req, res, next) => {
   if (req.user.userType !== "student") {
     return res.status(400).send({ message: "You cannot join a classroom" });
   }
-  const { classroom_id } = req.body;
-  const query = `insert into classroom_students(classroom_id, student_id) values('${classroom_id}', '${req.user.userId}')`;
+  const { short_classroom_code } = req.body;
+  const classroom_id = uuidTranslator.toUUID(short_classroom_code);
+
+  const query = `insert into students_classrooms(classroom_id, student_id) values('${classroom_id}', '${req.user.userId}')`;
   try {
     const result = await client.query(query);
     res.json(result);
@@ -63,9 +79,10 @@ const getJoinedClassrooms = async (req, res, next) => {
   if (req.user.userType !== "student") {
     return res.status(400).send({ message: "You cannot get joined classrooms" });
   }
-  const query = `select * from classrooms where classroom_id in (select classroom_id from classroom_students where student_id = '${req.user.userId}')`;
+  const query = `select classrooms.*, teachers.name as teacher_name, teachers.email as teacher_email from classrooms inner join teachers on classrooms.teacher_id = teachers.teacher_id inner join students_classrooms on classrooms.classroom_id = students_classrooms.classroom_id where students_classrooms.student_id = '${req.user.userId}'`;
   try {
     const result = await client.query(query);
+    // console.log(result.rows);
     res.json(result.rows);
   } catch (e) {
     console.log(e);
