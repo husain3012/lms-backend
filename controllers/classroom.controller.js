@@ -60,7 +60,6 @@ const getCreatedClassrooms = async (req, res, next) => {
   try {
     const result = await client.query(query);
     console.log(result.rows);
-    console.log(result.rows);
     const transformedData = result.rows.map((row) => {
       return {
         ...row,
@@ -107,4 +106,42 @@ const getJoinedClassrooms = async (req, res, next) => {
   }
 };
 
-module.exports = { getClassroomById, createClassroom, getCreatedClassrooms, joinClassroom, getJoinedClassrooms, getJoinedStudents };
+const leaveClassroom = async (req, res, next) => {
+  if (req.user.userType !== "student") {
+    return res.status(400).send({ message: "You cannot leave a classroom" });
+  }
+  const { classroom_id } = req.body;
+  const student_id = req.user.userId;
+  const query = `delete from students_classrooms where student_id = '${student_id}' AND classroom_id = '${classroom_id}'`;
+
+  try {
+    const result = await client.query(query);
+    console.log(result.rows);
+    res.json(result.rows);
+  } catch (e) {
+    console.log(e);
+    res.status(400).json({ message: "Error" });
+  }
+};
+
+const kickFromClassroom = async (req, res, next) => {
+  if (req.user.userType !== "teacher") {
+    return res.status(400).send({ message: "You cannot kick students from classroom" });
+  }
+  const { classroom_id, email } = req.body;
+  const query = `select * from students where email ='${email}' `;
+  try {
+    const result = await client.query(query);
+    const student_id = result.rows[0].student_id;
+    const kickQuery = `delete from students_classrooms where student_id = '${student_id}' AND classroom_id = '${classroom_id}'`;
+    const kickResult = await client.query(kickQuery);
+    console.log(kickResult.rows);
+    res.json(kickResult.rows);
+  } catch (e) {
+    console.log(e);
+    res.status(400).json({ message: "Error" });
+  }
+};
+
+
+module.exports = { getClassroomById, createClassroom, getCreatedClassrooms, joinClassroom, getJoinedClassrooms, getJoinedStudents, leaveClassroom, kickFromClassroom };
