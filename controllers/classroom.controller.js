@@ -143,5 +143,29 @@ const kickFromClassroom = async (req, res, next) => {
   }
 };
 
+const deleteClassroom = async (req, res, next) => {
+  if (req.user.userType !== "teacher") {
+    return res.status(400).send({ message: "You cannot delete a classroom" });
+  }
+  const { classroom_id } = req.params;
+  const query1 = `delete from students_classrooms where classroom_id = '${classroom_id}'`;
+  const query2 = `delete from notes where classroom_id = '${classroom_id}'`;
+  const query3 = `delete from classrooms where classroom_id = '${classroom_id}'`;
 
-module.exports = { getClassroomById, createClassroom, getCreatedClassrooms, joinClassroom, getJoinedClassrooms, getJoinedStudents, leaveClassroom, kickFromClassroom };
+  try {
+    const result1 = await client.query(query1);
+    const result2 = await client.query(query2);
+    const result3 = await client.query(query3);
+    const data = {
+      classroom: result1.rows,
+      students_classrooms: result2.rows,
+      notes: result3.rows,
+    };
+    res.json(data);
+  } catch (e) {
+    console.log(e);
+    res.status(400).json({ message: "Error" });
+  }
+};
+
+module.exports = { getClassroomById, createClassroom, getCreatedClassrooms, joinClassroom, getJoinedClassrooms, getJoinedStudents, leaveClassroom, kickFromClassroom, deleteClassroom };
