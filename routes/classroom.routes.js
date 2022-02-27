@@ -1,5 +1,5 @@
 const express = require("express");
-const { getClassroomById, getJoinedClassrooms, getCreatedClassrooms, createClassroom, joinClassroom, getJoinedStudents } = require("../controllers/classroom.controller");
+const { getClassroomById, getJoinedClassrooms, getCreatedClassrooms, createClassroom, joinClassroom, getJoinedStudents, leaveClassroom, kickFromClassroom } = require("../controllers/classroom.controller");
 const { authMiddleware } = require("../middleware/auth.middleware");
 const router = express.Router();
 
@@ -9,5 +9,7 @@ router.get("/students/:classroom_id", authMiddleware, getJoinedStudents);
 router.get("/:id", authMiddleware, getClassroomById);
 router.post("/create", authMiddleware, createClassroom);
 router.post("/join", authMiddleware, joinClassroom);
+router.post("/leave", authMiddleware, leaveClassroom);
+router.post("/kick", authMiddleware, kickFromClassroom);
 
 module.exports = router;
