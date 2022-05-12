@@ -1,5 +1,7 @@
 const express = require("express");
+const cors = require("cors");
 const router = express.Router();
+router.use(cors());
 const { authMiddleware } = require("../middleware/auth.middleware");
 const { getUsers, signup, login, addFakeUsers, updateDetails } = require("../controllers/teacher.controller");
 
