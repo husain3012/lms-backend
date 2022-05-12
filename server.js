@@ -14,20 +14,27 @@ const cors = require("cors");
 const port = process.env.PORT || 5000;
 
 const app = express();
+
 app.use(cors());
-app.use(logger("dev"));
-
-app.use(
-  bodyParser.json({
-    limit: "50mb",
-  })
-);
-
+if (process.env.NODE_ENV === "development") {
+  app.use(logger("dev"));
+}
+app.use(function(req, res, next) {
+  res.header("Access-Control-Allow-Origin", "*");
+  res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+  res.header("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS");
+  next();
+});
 app.use(
   bodyParser.urlencoded({
     limit: "50mb",
     parameterLimit: 100000,
     extended: true,
+  })
+);
+app.use(
+  bodyParser.json({
+    limit: "50mb",
   })
 );
 
