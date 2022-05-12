@@ -7,7 +7,7 @@ const { getUsers, signup, login, addFakeUsers, updateDetails } = require("../con
 
 router.get("/get_all_users", getUsers);
 router.post("/signup", signup);
-router.post("/login", login);
+router.post("/login", cors(), login);
 router.post("/add_fake_users", addFakeUsers);
 router.post("/update_details", authMiddleware, updateDetails);
 
