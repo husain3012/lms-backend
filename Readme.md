@@ -12,21 +12,21 @@ NEW_DATABASE=true if you want fresh database at every run
 
 ### Teacher Routes
 
-| Use     | URL                        | Method | Params                       | Access | Status |
-| ------- | -------------------------- | ------ | ---------------------------- | ------ | ------ |
-| Login   | /api/teacher/login         | POST   | email, password              | Public | OK     |
-| Sign up | /api/teacher/signup        | POST   | name, email, password        | Public | OK     |
-| Update  |/api/teacher/update_details | POST   | name/oldPassword,newPassword | Public | OK     |
+| Use     | URL                         | Method | Params                       | Access | Status |
+| ------- | --------------------------- | ------ | ---------------------------- | ------ | ------ |
+| Login   | /api/teacher/login          | POST   | email, password              | Public | OK     |
+| Sign up | /api/teacher/signup         | POST   | name, email, password        | Public | OK     |
+| Update  | /api/teacher/update_details | POST   | name/oldPassword,newPassword | Public | OK     |
 
 ---
 
 ### Student Routes
 
-| Use     | URL                        | Method | Params                       | Access | Status |
-| ------- | -------------------------- | ------ | ---------------------------- | ------ | ------ |
-| Login   | /api/student/login         | POST   | email, password              | Public | OK     |
-| Sign up | /api/student/signup        | POST   | name, email, password        | Public | OK     |
-| Update  |/api/student/update_details | POST   | name/oldPassword,newPassword | Public | OK     |
+| Use     | URL                         | Method | Params                       | Access | Status |
+| ------- | --------------------------- | ------ | ---------------------------- | ------ | ------ |
+| Login   | /api/student/login          | POST   | email, password              | Public | OK     |
+| Sign up | /api/student/signup         | POST   | name, email, password        | Public | OK     |
+| Update  | /api/student/update_details | POST   | name/oldPassword,newPassword | Public | OK     |
 
 ---
 
@@ -44,10 +44,11 @@ NEW_DATABASE=true if you want fresh database at every run
 
 ### Notes Routes
 
-| Use        | URL                                 | Method | Params            | Access | Status |
-| ---------- | ----------------------------------- | ------ | ----------------- | ------ | ------ |
-| Post Notes | /api/notes/post_notes/:classroom_id | POST   | name, description | PUBLIC | OK     |
-| Get Notes  | /api/notes/get_notes/:classroom_id  | GET    | \_\_              | PUBLIC | OK     |
+| Use            | URL                                 | Method | Params            | Access | Status |
+| -------------- | ----------------------------------- | ------ | ----------------- | ------ | ------ |
+| Post Notes     | /api/notes/post_notes/:classroom_id | POST   | name, description | PUBLIC | OK     |
+| Get Notes      | /api/notes/get_notes/:classroom_id  | GET    | \_\_              | PUBLIC | OK     |
+| Get Note by id | /api/notes/get/:note_id             | GET    | \_\_              | PUBLIC | OK     |
 
 ---
 

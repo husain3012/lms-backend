@@ -6,15 +6,16 @@ const uuidTranslator = short_uuid();
 uuidTranslator.maxLength = 10;
 
 const getClassroomById = async (req, res, next) => {
-  const { classroom_id } = req.params;
-  const query = `select * from classrooms where classroom_id = '${classroom_id}'`;
+  const { id } = req.params;
+
+  const query = `select * from classrooms where classroom_id = '${id}'`;
 
   try {
     const result = await client.query(query);
-    console.log(result.rows);
-    res.json(result.rows);
+    const classroom = result.rows[0];
+    classroom.short_id = uuidTranslator.fromUUID(classroom.classroom_id, (length = 6));
+    res.json(classroom);
   } catch (e) {
-    console.log(e);
     res.status(400).json({ message: "Error" });
   }
 };
@@ -26,17 +27,22 @@ const getJoinedStudents = async (req, res, next) => {
     const result = await client.query(query);
     res.json(result.rows);
   } catch (e) {
-    console.log(e);
     res.status(400).json({ message: "Error" });
   }
 };
 
 const createClassroom = async (req, res, next) => {
-  const { name, description, section } = req.body;
+  const { name, description, section, color } = req.body;
+  // sanitize data
+  const sanitizedName = name.replace(/'/g, "''");
+  const sanitizedDescription = description.replace(/'/g, "''");
+  const sanitizedSection = section.replace(/'/g, "''");
+  const sanitizedColor = color.replace(/'/g, "''");
+
   if (req.user.userType !== "teacher") {
     return res.status(400).send({ message: "You are not authorized to create a classroom" });
   }
-  const query = `insert into classrooms(classroom_id, name,description, section, teacher_id) values('${uuidv4()}', '${name}','${description}', '${section}', '${req.user.userId}')`;
+  const query = `insert into classrooms(classroom_id, name, description, color, section, teacher_id) values('${uuidv4()}', '${sanitizedName}','${sanitizedDescription}', '${sanitizedColor}', '${sanitizedSection}', '${req.user.userId}')`;
   try {
     const result = await client.query(query);
     res.json(result);
@@ -52,21 +58,15 @@ const getCreatedClassrooms = async (req, res, next) => {
   }
 
   const query = `select classrooms.* from classrooms inner join teachers on classrooms.teacher_id = teachers.teacher_id where classrooms.teacher_id = '${req.user.userId}'`;
-  // get created classrooms with number of students erolled
-  // const query = `select classrooms.*, count(students_classrooms.student_id) as students_count from classrooms inner join teachers on classrooms.teacher_id = teachers.teacher_id inner join students_classrooms on classrooms.classroom_id = students_classrooms.classroom_id where classrooms.teacher_id = '${req.user.userId}' group by classrooms.classroom_id`;
-  // get created classrooms with number of students enrolled in each classroom group by classroom_id
-  //const query = `select classrooms.*, teachers.name as teacher_name, teachers.email as teacher_email, count(students_classrooms.student_id) as students_count from classrooms inner join teachers on classrooms.teacher_id = teachers.teacher_id inner join students_classrooms on classrooms.classroom_id = students_classrooms.classroom_id where classrooms.teacher_id = '${req.user.userId}' group by classrooms.classroom_id`;
 
   try {
     const result = await client.query(query);
-    console.log(result.rows);
     const transformedData = result.rows.map((row) => {
       return {
         ...row,
         short_id: uuidTranslator.fromUUID(row.classroom_id, (length = 6)),
       };
     });
-    // console.log(transformedData);
     res.json(transformedData);
   } catch (e) {
     console.log(e);
@@ -147,10 +147,10 @@ const deleteClassroom = async (req, res, next) => {
   if (req.user.userType !== "teacher") {
     return res.status(400).send({ message: "You cannot delete a classroom" });
   }
-  const { classroom_id } = req.params;
-  const query1 = `delete from students_classrooms where classroom_id = '${classroom_id}'`;
-  const query2 = `delete from notes where classroom_id = '${classroom_id}'`;
-  const query3 = `delete from classrooms where classroom_id = '${classroom_id}'`;
+  const { id } = req.params;
+  const query1 = `delete from students_classrooms where classroom_id = '${id}'`;
+  const query2 = `delete from notes where classroom_id = '${id}'`;
+  const query3 = `delete from classrooms where classroom_id = '${id}'`;
 
   try {
     const result1 = await client.query(query1);
@@ -161,6 +161,7 @@ const deleteClassroom = async (req, res, next) => {
       students_classrooms: result2.rows,
       notes: result3.rows,
     };
+
     res.json(data);
   } catch (e) {
     console.log(e);

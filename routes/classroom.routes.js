@@ -11,6 +11,6 @@ router.post("/create", authMiddleware, createClassroom);
 router.post("/join", authMiddleware, joinClassroom);
 router.post("/leave", authMiddleware, leaveClassroom);
 router.post("/kick", authMiddleware, kickFromClassroom);
-router.delete("/:classroom_id", authMiddleware, deleteClassroom);
+router.delete("/:id", authMiddleware, deleteClassroom);
 
 module.exports = router;

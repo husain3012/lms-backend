@@ -27,12 +27,12 @@ const connectToClient = async () => {
         password VARCHAR(255) NOT NULL,
         created_at TIMESTAMP DEFAULT NOW()
         );
-
     CREATE TABLE IF NOT EXISTS classrooms (
         classroom_id  varchar(255) PRIMARY KEY,
         name VARCHAR(255) NOT NULL,
         section VARCHAR(255),
         description VARCHAR(255),
+        color VARCHAR(255),
         teacher_id varchar(255) NOT NULL,
         FOREIGN KEY (teacher_id) REFERENCES teachers(teacher_id),
         created_at TIMESTAMP DEFAULT NOW()
@@ -45,18 +45,27 @@ const connectToClient = async () => {
         created_at TIMESTAMP DEFAULT NOW()
         );
     CREATE TABLE IF NOT EXISTS notes (
-        notes_id VARCHAR(255) PRIMARY KEY,
+        note_id VARCHAR(255) PRIMARY KEY,
         classroom_id VARCHAR(255) NOT NULL, 
         type VARCHAR(255) NOT NULL,
-        body varchar(255) NOT NULL,
+        title VARCHAR(255) NOT NULL,
+        body varchar(10485760),
         FOREIGN KEY (classroom_id) REFERENCES classrooms(classroom_id),
+        created_at TIMESTAMP DEFAULT NOW()
+        );
+    CREATE TABLE IF NOT EXISTS submissions (
+        submission_id VARCHAR(255) PRIMARY KEY,
+        note_id VARCHAR(255) NOT NULL,
+        student_id VARCHAR(255) NOT NULL,
+        url VARCHAR(255) NOT NULL,
+        FOREIGN KEY (note_id) REFERENCES notes(note_id),
+        FOREIGN KEY (student_id) REFERENCES students(student_id),
         created_at TIMESTAMP DEFAULT NOW()
         );
         `;
 
     await client.query(query);
     console.log("Connected to database, you are good to go!");
-
   } catch (e) {
     console.log(e);
   }
