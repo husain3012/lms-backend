@@ -1,0 +1,4 @@
+{
+    "appService.defaultWebAppToDeploy": "/subscriptions/c6affd9b-8e34-43b7-8e83-5d2cd182c5fe/resourceGroups/appsvc_linux_centralus/providers/Microsoft.Web/sites/lmsjmi-backend",
+    "appService.deploySubpath": "."
+}

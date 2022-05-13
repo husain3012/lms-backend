@@ -43,7 +43,7 @@ app.use(
 app.use(cookieParser());
 
 app.get("/", (req, res) => {
-  res.send("Hello World");
+  return res.send("Server is running!");
 });
 
 // routes

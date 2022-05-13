@@ -14,21 +14,21 @@ const connectToClient = async () => {
     CREATE DATABASE IF NOT EXISTS lms;
     Use lms;
     CREATE TABLE IF NOT EXISTS teachers (
-        teacher_id varchar(255) PRIMARY KEY,
+        teacher_id varchar(255) PRIMARY KEY NOT NULL UNIQUE,
         name VARCHAR(255) NOT NULL,
         email VARCHAR(255) NOT NULL,
         password VARCHAR(255) NOT NULL,
         created_at TIMESTAMP DEFAULT NOW()
         );
     CREATE TABLE IF NOT EXISTS students (
-        student_id  varchar(255) PRIMARY KEY,
+        student_id  varchar(255) PRIMARY KEY NOT NULL UNIQUE,
         name VARCHAR(255) NOT NULL,
         email VARCHAR(255) NOT NULL,
         password VARCHAR(255) NOT NULL,
         created_at TIMESTAMP DEFAULT NOW()
         );
     CREATE TABLE IF NOT EXISTS classrooms (
-        classroom_id  varchar(255) PRIMARY KEY,
+        classroom_id  varchar(255) PRIMARY KEY NOT NULL UNIQUE,
         name VARCHAR(255) NOT NULL,
         section VARCHAR(255),
         description VARCHAR(255),
@@ -38,14 +38,14 @@ const connectToClient = async () => {
         created_at TIMESTAMP DEFAULT NOW()
         );
     CREATE TABLE IF NOT EXISTS students_classrooms (
-        student_id  varchar(255) NOT NULL,
+        student_id  varchar(255) NOT NULL UNIQUE,
         classroom_id  varchar(255) NOT NULL,
         FOREIGN KEY (student_id) REFERENCES students(student_id),
         FOREIGN KEY (classroom_id) REFERENCES classrooms(classroom_id),
         created_at TIMESTAMP DEFAULT NOW()
         );
     CREATE TABLE IF NOT EXISTS notes (
-        note_id VARCHAR(255) PRIMARY KEY,
+        note_id VARCHAR(255) PRIMARY KEY NOT NULL UNIQUE,
         classroom_id VARCHAR(255) NOT NULL, 
         type VARCHAR(255) NOT NULL,
         title VARCHAR(255) NOT NULL,
@@ -54,7 +54,7 @@ const connectToClient = async () => {
         created_at TIMESTAMP DEFAULT NOW()
         );
     CREATE TABLE IF NOT EXISTS submissions (
-        submission_id VARCHAR(255) PRIMARY KEY,
+        submission_id VARCHAR(255) PRIMARY KEY NOT NULL UNIQUE,
         note_id VARCHAR(255) NOT NULL,
         student_id VARCHAR(255) NOT NULL,
         url VARCHAR(255) NOT NULL,
