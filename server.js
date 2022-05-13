@@ -20,12 +20,11 @@ if (process.env.NODE_ENV === "development") {
   app.use(logger("dev"));
 }
 // access control origin
-app.use(function(req, res, next) {
+app.use(function (req, res, next) {
   res.header("Access-Control-Allow-Origin", "*");
   res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
   next();
-}
-);
+});
 
 app.use(
   bodyParser.urlencoded({
@@ -42,8 +41,13 @@ app.use(
 
 app.use(cookieParser());
 
-app.get("/", (req, res) => {
+app.get("/ping", (req, res) => {
   return res.send("Server is running!");
+});
+
+// server delay
+app.use(function (req, res, next) {
+  setTimeout(next, 1000);
 });
 
 // routes

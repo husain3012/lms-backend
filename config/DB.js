@@ -11,6 +11,7 @@ const connectToClient = async () => {
     }
     const query = `
     ${process.env.NEW_DATABASE === "true" ? "DROP DATABASE IF EXISTS lms;" : ""}
+    SET TIME ZONE 'Asia/Kolkata';
     CREATE DATABASE IF NOT EXISTS lms;
     Use lms;
     CREATE TABLE IF NOT EXISTS teachers (

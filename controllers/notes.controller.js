@@ -17,7 +17,7 @@ const post_notes = async (req, res, next) => {
 const get_notes = async (req, res, next) => {
   const { type, body } = req.body;
   const classroom_id = req.params.classroom_id;
-  const query = `select * from notes where classroom_id = '${classroom_id}'`;
+  const query = `select * from notes where classroom_id = '${classroom_id}' ORDER BY created_at DESC`;
   try {
     const result = await client.query(query);
     res.json(result.rows);

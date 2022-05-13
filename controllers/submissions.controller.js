@@ -24,7 +24,6 @@ const getAllSubmissionsForNote = async (req, res, next) => {
   try {
     const submissions = (await client.query(querySubmissions)).rows;
     const students = (await client.query(queryStudents)).rows;
-    console.log(students);
     // group by students
     const studentSubmissions = [];
 
@@ -35,8 +34,6 @@ const getAllSubmissionsForNote = async (req, res, next) => {
         student_email: student.student_email,
         submissions: [],
       };
-
-
       submissions.forEach((submission) => {
         students.find((student) => {
           if (student.student_id === submission.student_id) {
@@ -47,7 +44,6 @@ const getAllSubmissionsForNote = async (req, res, next) => {
 
       studentSubmissions.push(studentSubmissionsObj);
     });
-    console.log(studentSubmissions);
     return res.json(studentSubmissions);
   } catch (e) {
     console.log(e);
