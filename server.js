@@ -47,7 +47,8 @@ app.get("/ping", (req, res) => {
 
 // server delay
 app.use(function (req, res, next) {
-  setTimeout(next, 1000);
+  const delay = process.env.DELAY || 0;
+  setTimeout(next, delay);
 });
 
 // routes

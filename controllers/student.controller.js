@@ -95,7 +95,6 @@ const addFakeUsers = async (req, res, next) => {
   }
 };
 
-
 const updateDetails = async (req, res, next) => {
   const { name, oldPassword, newPassword } = req.body;
   const student_id = req.user.userId;
@@ -108,8 +107,7 @@ const updateDetails = async (req, res, next) => {
       console.log(e);
       res.status(400).json({ message: "Error" });
     }
-  }
-  else if (oldPassword !== undefined) {
+  } else if (oldPassword !== undefined) {
     const checkPasswordQuery = `select * from students where student_id = '${student_id}'`;
     const result = await client.query(checkPasswordQuery);
     const user = result.rows[0];
@@ -124,12 +122,13 @@ const updateDetails = async (req, res, next) => {
         console.log(e);
         res.status(400).json({ message: "Error" });
       }
-    }
-    else {
+    } else {
       res.status(400).json({ message: "Wrong Password" });
     }
   }
 };
+
+
 
 module.exports = {
   getUsers,
