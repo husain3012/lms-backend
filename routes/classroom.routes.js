@@ -5,6 +5,7 @@ const router = express.Router();
 
 router.get("/joined", authMiddleware, getJoinedClassrooms);
 router.get("/created", authMiddleware, getCreatedClassrooms);
+
 router.get("/students/:classroom_id", authMiddleware, getJoinedStudents);
 router.get("/:id", authMiddleware, getClassroomById);
 router.post("/create", authMiddleware, createClassroom);

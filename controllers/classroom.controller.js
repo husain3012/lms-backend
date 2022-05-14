@@ -22,7 +22,7 @@ const getClassroomById = async (req, res, next) => {
 
 const getJoinedStudents = async (req, res, next) => {
   const { classroom_id } = req.params;
-  const query = `select students.name as student_name, students.email as student_email from students_classrooms inner join students on students_classrooms.student_id = students.student_id where classroom_id = '${classroom_id}'`;
+  const query = `select students.name as student_name, students.email as student_email, students_classrooms.created_at as joined_on  from students_classrooms inner join students on students_classrooms.student_id = students.student_id where classroom_id = '${classroom_id}' ORDER BY student_name ASC`;
   try {
     const result = await client.query(query);
     res.json(result.rows);
@@ -168,5 +168,7 @@ const deleteClassroom = async (req, res, next) => {
     res.status(400).json({ message: "Error" });
   }
 };
+
+
 
 module.exports = { getClassroomById, createClassroom, getCreatedClassrooms, joinClassroom, getJoinedClassrooms, getJoinedStudents, leaveClassroom, kickFromClassroom, deleteClassroom };
