@@ -25,24 +25,19 @@ const getAllSubmissionsForNote = async (req, res, next) => {
     const submissions = (await client.query(querySubmissions)).rows;
     const students = (await client.query(queryStudents)).rows;
     // group by students
-    const studentSubmissions = [];
+    const studentSubmissions = students.map((student) => ({
+      student_id: student.student_id,
+      student_name: student.student_name,
+      student_email: student.student_email,
+      submissions: [],
+    }));
 
-    students.forEach((student) => {
-      const studentSubmissionsObj = {
-        student_id: student.student_id,
-        student_name: student.student_name,
-        student_email: student.student_email,
-        submissions: [],
-      };
+    studentSubmissions.forEach((student) => {
       submissions.forEach((submission) => {
-        students.find((student) => {
-          if (student.student_id === submission.student_id) {
-            studentSubmissionsObj.submissions.push(submission);
-          }
-        });
+        if (student.student_id === submission.student_id) {
+          student.submissions.push(submission);
+        }
       });
-
-      studentSubmissions.push(studentSubmissionsObj);
     });
     return res.json(studentSubmissions);
   } catch (e) {
