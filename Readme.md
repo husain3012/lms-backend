@@ -1,4 +1,6 @@
-# REST API server for LMS project
+# REST API server for LMS project, Team 4
+## Members:
+- [20BCS028 Husain Shahid Rao](https://github.com/husain3012)
 
 ## ENV Vars
 
